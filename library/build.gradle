@@ -1,0 +1,54 @@
+apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+def deployTo = new File(rootDir, "repository")
+
+android {
+    compileSdkVersion 20
+    buildToolsVersion "20.0.0"
+
+    defaultConfig {
+        minSdkVersion 10
+        targetSdkVersion 20
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "com.uphyca.testing.JUnit4InstrumentationTestRunner"
+    }
+    packagingOptions {
+        // for AndroidStudio's bug. duplication error of file below.
+        pickFirst 'META-INF/LICENSE.txt'
+        pickFirst 'LICENSE.txt'
+    }
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:19.+'
+    compile 'junit:junit:4.+'
+    compile 'com.uphyca:android-junit4:+'
+    compile 'com.jayway.android.robotium:robotium-solo:+'
+    compile 'org.mockito:mockito-core:+'
+
+    androidTestCompile 'junit:junit:4.+'
+    androidTestCompile 'com.uphyca:android-junit4:+'
+    androidTestCompile 'com.jayway.android.robotium:robotium-solo:+'
+    androidTestCompile 'org.mockito:mockito-core:+'
+}
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository url: "file://${deployTo.absolutePath}"
+            pom.version = '0.0.1'
+            pom.groupId = 'jp.gcreate'
+            pom.artifactId = 'junit4-lib'
+        }
+    }
+}
